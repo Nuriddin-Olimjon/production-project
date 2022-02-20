@@ -6,11 +6,11 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('user', include('api.v1.user.urls')),
-    path('storage', include('api.v1.storage.urls')),
-    path('supplier', include('api.v1.supplier.urls')),
-    path('sales', include('api.v1.sales.urls')),
-    path('finance', include('api.v1.finance.urls'))
+    path('user/', include('api.v1.user.urls')),
+    path('storage/', include('api.v1.storage.urls')),
+    path('supplier/', include('api.v1.supplier.urls')),
+    path('sales/', include('api.v1.sales.urls')),
+    path('finance/', include('api.v1.finance.urls'))
 ]
 
 if settings.DEBUG:

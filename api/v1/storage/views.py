@@ -1,7 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.filters import SearchFilter
-from rest_framework import mixins
+from rest_framework.response import Response
+from rest_framework import mixins, status
 
 from . import models, serializers
 
@@ -27,6 +28,14 @@ class ReceiveInvoiceOrderViewSet(mixins.CreateModelMixin,
                                  GenericViewSet):
     queryset = models.ReceiveInvoiceOrder.objects
     serializer_class = serializers.ReceiveInvoiceOrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.validated_data['product']
+        serializer.save(price=product.arrival_price, currency=product.currency)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class LeaveInvoiceViewSet(mixins.CreateModelMixin,

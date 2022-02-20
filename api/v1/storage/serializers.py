@@ -3,6 +3,8 @@ from . import models
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    quantity = serializers.ReadOnlyField()
+
     class Meta:
         model = models.Product
         fields = (
@@ -59,18 +61,23 @@ class ReceiveInvoiceSerializer(serializers.ModelSerializer):
 
 
 class ReceiveInvoiceOrderSerializer(serializers.ModelSerializer):
+    price = serializers.ReadOnlyField()
+    currency = serializers.ReadOnlyField()
     class Meta:
         model = models.ReceiveInvoiceOrder
         fields = (
             'id',
             'invoice',
             'product',
-            'quantity'
+            'quantity',
+            'price',
+            'currency'
         )
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['product'] = instance.product.title
+        data['currency'] = instance.currency.title
         return data
 
 
