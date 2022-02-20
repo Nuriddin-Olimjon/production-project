@@ -44,9 +44,24 @@ class LeaveInvoiceViewSet(mixins.CreateModelMixin,
     queryset = models.LeaveInvoice.objects
     serializer_class = serializers.LeaveInvoiceSerializer
     
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(created_by=request.user)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class LeaveInvoiceOrderViewSet(mixins.CreateModelMixin,
                                mixins.ListModelMixin,
                                GenericViewSet):
     queryset = models.LeaveInvoiceOrder.objects
     serializer_class = serializers.LeaveInvoiceOrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.validated_data['product']
+        serializer.save(price=product.arrival_price, currency=product.currency)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

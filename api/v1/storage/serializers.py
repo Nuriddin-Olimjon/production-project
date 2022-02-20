@@ -26,7 +26,7 @@ class ProductSerializer(serializers.ModelSerializer):
             'time_created',
             'time_updated',
 
-            'quantity'
+            'quantity',
         )
 
     def to_representation(self, instance):
@@ -63,6 +63,7 @@ class ReceiveInvoiceSerializer(serializers.ModelSerializer):
 class ReceiveInvoiceOrderSerializer(serializers.ModelSerializer):
     price = serializers.ReadOnlyField()
     currency = serializers.ReadOnlyField()
+
     class Meta:
         model = models.ReceiveInvoiceOrder
         fields = (
@@ -91,7 +92,6 @@ class LeaveInvoiceSerializer(serializers.ModelSerializer):
             'deadline',
             'responsible',
             'status',
-            'created_by',
             'description',
             'further',
             'time_created',
@@ -107,18 +107,24 @@ class LeaveInvoiceSerializer(serializers.ModelSerializer):
 
 
 class LeaveInvoiceOrderSerializer(serializers.ModelSerializer):
+    price = serializers.ReadOnlyField()
+    currency = serializers.ReadOnlyField()
+
     class Meta:
         model = models.LeaveInvoiceOrder
         fields = (
             'id',
             'invoice',
             'product',
-            'quantity'
+            'quantity',
+            'price',
+            'currency'
         )
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data['product'] = instance.product.title
+        data['currency'] = instance.currency.title
         return data
 
 

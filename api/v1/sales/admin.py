@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import Client, ClientBankDetail, City
 
-# Register your models here.
+
+admin.site.register(Client)
+admin.site.register(ClientBankDetail)
+admin.site.register(City)
+

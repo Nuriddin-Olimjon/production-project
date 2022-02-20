@@ -153,10 +153,12 @@ class LeaveInvoice(DateTimeMixinModel):
 
 class LeaveInvoiceOrder(DateTimeMixinModel):
     invoice = models.ForeignKey(
-        ReceiveInvoice, on_delete=models.CASCADE, verbose_name="Faktura")
+        LeaveInvoice, on_delete=models.CASCADE, verbose_name="Faktura")
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name="Mahsulot")
     quantity = models.FloatField(verbose_name="Miqdori")
+    price = models.PositiveIntegerField(verbose_name='Narxi')
+    currency = models.ForeignKey('finance.Currency', on_delete=models.CASCADE, verbose_name='Valyuta')
 
 
 class DefectiveProduct(DateTimeMixinModel):
