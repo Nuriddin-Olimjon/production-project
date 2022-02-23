@@ -5,20 +5,20 @@ from api.v1.user.models import DateTimeMixinModel
 
 class Income(DateTimeMixinModel):
     PAYMENT_TYPE = (
-        ('Naqd', 'Naqd'),
-        ('Plastik', 'Plastik'),
-        ('Bank', 'Bank')
+        ('cash', 'cash'),
+        ('card', 'card'),
+        ('bank', 'bank')
     )
     TYPE = (
-        ('Client', 'Client'),
-        ('Extra', 'Extra')
+        ('client', 'client'),
+        ('extra', 'extra')
     )
 
     cashbox = models.ForeignKey(
         'Cashbox', on_delete=models.CASCADE, verbose_name="Kassa nomi")
 
     type = models.CharField(max_length=255, choices=TYPE,
-                            default='Normal', verbose_name="Kirim turi")
+                            verbose_name="Kirim turi")
 
     client = models.ForeignKey(
         'sales.Client', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Mijoz")
@@ -49,9 +49,9 @@ class Income(DateTimeMixinModel):
 
 class Payment(DateTimeMixinModel):
     PAYMENT_TYPE = (
-        ('Naqd', 'Naqd'),
-        ('Plastik', 'Plastik'),
-        ('Bank', 'Bank')
+        ('cash', 'cash'),
+        ('card', 'card'),
+        ('bank', 'bank')
     )
     cost_type = models.ForeignKey(
         'CostType', on_delete=models.CASCADE, verbose_name="Chiqim turi")
@@ -67,6 +67,8 @@ class Payment(DateTimeMixinModel):
 
     employee = models.ForeignKey(
         'user.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='payments', verbose_name="Hodim")
+
+    sub_cost_type = models.ForeignKey('SubCostType', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Sub kategoriya")
 
     bonus = models.PositiveIntegerField(
         blank=True, null=True, verbose_name="Bonus")
@@ -102,9 +104,12 @@ class Payment(DateTimeMixinModel):
 
 
 class CostType(models.Model):
-    title = models.CharField(max_length=50, unique=True, verbose_name="Chiqim turi nomi")
-    to_supplier = models.BooleanField(default=False, verbose_name="Ta'minotchiga")
-    to_employee = models.BooleanField(default=False, verbose_name="Hodim uchun maosh")
+    title = models.CharField(max_length=50, unique=True,
+                             verbose_name="Chiqim turi nomi")
+    to_supplier = models.BooleanField(
+        default=False, verbose_name="Ta'minotchiga")
+    to_employee = models.BooleanField(
+        default=False, verbose_name="Hodim uchun maosh")
 
     class Meta:
         verbose_name = "Chiqim turi"
@@ -115,7 +120,8 @@ class CostType(models.Model):
 
 
 class SubCostType(models.Model):
-    type = models.ForeignKey(CostType, on_delete=models.CASCADE, verbose_name="Chiqim turi")
+    type = models.ForeignKey(
+        CostType, on_delete=models.CASCADE, verbose_name="Chiqim turi")
     title = models.CharField(max_length=255, verbose_name="Subkategoriya nomi")
 
     class Meta:
@@ -128,7 +134,8 @@ class SubCostType(models.Model):
 
 
 class Cashbox(models.Model):
-    title = models.CharField(max_length=255, unique=True, verbose_name="Kassa nomi")
+    title = models.CharField(
+        max_length=255, unique=True, verbose_name="Kassa nomi")
     cashier = models.OneToOneField('user.User', on_delete=models.CASCADE)
 
     class Meta:

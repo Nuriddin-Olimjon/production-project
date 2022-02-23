@@ -1,7 +1,5 @@
 from django.contrib import admin
-from .models import Supplier, BankDetails
+from .models import Supplier
 
 
 admin.site.register(Supplier)
-admin.site.register(BankDetails)
-

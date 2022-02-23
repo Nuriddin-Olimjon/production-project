@@ -19,7 +19,6 @@ class ProductSerializer(serializers.ModelSerializer):
             'selling_price',
             'currency',
             'shelf_life',
-            'storage',
             'critical_quantity',
             'description',
             'further',
@@ -34,6 +33,53 @@ class ProductSerializer(serializers.ModelSerializer):
         data['group'] = instance.group.title
         data['measurement_unit'] = instance.measurement_unit.title
         data['currency'] = instance.currency.title
+        return data
+
+
+class ProductGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ProductGroup
+        fields = (
+            'id',
+            'title'
+        )
+
+
+class MeasurementUnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.MeasurementUnit
+        fields = (
+            'id',
+            'title'
+        )
+
+class StorageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Storage
+        fields = (
+            'id',
+            'title',
+            'address'
+        )
+
+
+class ProductOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.ProductOrder
+        fields = (
+            'id',
+            'type',
+            'receive_invoice',
+            'leave_invoice',
+            'product',
+            'quantity',
+        )
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['product'] = instance.product.title
+        data['currency'] = instance.currency.title
+        data['price'] = instance.price
         data['storage'] = instance.storage.title
         return data
 
@@ -60,28 +106,6 @@ class ReceiveInvoiceSerializer(serializers.ModelSerializer):
         return data
 
 
-class ReceiveInvoiceOrderSerializer(serializers.ModelSerializer):
-    price = serializers.ReadOnlyField()
-    currency = serializers.ReadOnlyField()
-
-    class Meta:
-        model = models.ReceiveInvoiceOrder
-        fields = (
-            'id',
-            'invoice',
-            'product',
-            'quantity',
-            'price',
-            'currency'
-        )
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['product'] = instance.product.title
-        data['currency'] = instance.currency.title
-        return data
-
-
 class LeaveInvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LeaveInvoice
@@ -103,28 +127,6 @@ class LeaveInvoiceSerializer(serializers.ModelSerializer):
         data['storage'] = instance.storage.title
         data['client'] = instance.client.title
         data['created_by'] = f"{instance.created_by.first_name} {instance.created_by.last_name}"
-        return data
-
-
-class LeaveInvoiceOrderSerializer(serializers.ModelSerializer):
-    price = serializers.ReadOnlyField()
-    currency = serializers.ReadOnlyField()
-
-    class Meta:
-        model = models.LeaveInvoiceOrder
-        fields = (
-            'id',
-            'invoice',
-            'product',
-            'quantity',
-            'price',
-            'currency'
-        )
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data['product'] = instance.product.title
-        data['currency'] = instance.currency.title
         return data
 
 

@@ -22,15 +22,15 @@ class DateTimeMixinModel(models.Model):
 
 class User(DateTimeMixinModel, AbstractUser):
     ROLES = (
-        ("Direktor", "Direktor"),
-        ("Sotuv boshlig'i", "Sotuv boshlig'i"),
-        ("Sotuv meneger", "Sotuv meneger"),
-        ("Omborchi", "Omborchi"),
-        ("Ta'minotchi", "Ta'minotchi"),
-        ("Texnolog", "Texnolog"),
-        ("Seh boshlig'i", "Seh boshlig'i"),
-        ("Nazoratchi", "Nazoratchi"),
-        ("Kassir", "Kassir"),
+        ("director", "director"),
+        ("sales-director", "sales-director"),
+        ("sales-manager", "sales-manager"),
+        ("stockman", "stockman"),
+        ("supplier", "supplier"),
+        ("technolog", "technolog"),
+        ("production-director", "production-director"),
+        ("controller", "controller"),
+        ("cashier", "cashier"),
     )
 
     role = models.CharField(
@@ -54,7 +54,7 @@ class User(DateTimeMixinModel, AbstractUser):
         upload_to='photos/%y/%m/%d', null=True, blank=True, verbose_name="Rasmi")
 
     storages = models.ManyToManyField(
-        'storage.Storage', verbose_name="Omborlar")
+        'storage.Storage', blank=True, verbose_name="Omborlar")
 
     objects = CustomUserManager()
 

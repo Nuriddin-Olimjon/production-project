@@ -5,15 +5,15 @@ from .managers import ProductManager
 
 class Product(DateTimeMixinModel):
     PRODUCT_TYPE = (
-        ('Homashyo', 'Homashyo'),
-        ('Yarim tayyor', 'Yarim tayyor'),
-        ('Tayyor', 'Tayyor'),
-        ('Inventar', 'Inventar'),
+        ('raw', 'raw'),
+        ('semi-finished', 'semi-finished'),
+        ('finished', 'finished'),
+        ('inventory', 'inventory'),
     )
 
-    title = models.CharField(max_length=255, verbose_name='Nomi')
-    model = models.CharField(max_length=50, verbose_name='Model')
-    code = models.CharField(max_length=50, verbose_name='Kod')
+    title = models.CharField(max_length=255, unique=True, verbose_name='Nomi')
+    model = models.CharField(max_length=50, unique=True, verbose_name='Model')
+    code = models.CharField(max_length=50, unique=True, verbose_name='Kod')
     type = models.CharField(
         max_length=255, choices=PRODUCT_TYPE, verbose_name="Turi")
     group = models.ForeignKey(
@@ -32,8 +32,6 @@ class Product(DateTimeMixinModel):
     shelf_life = models.CharField(
         max_length=50, verbose_name='Yaroqlilik muddati')
 
-    storage = models.ForeignKey(
-        'Storage', on_delete=models.CASCADE, verbose_name='Ombor')
     critical_quantity = models.FloatField(
         default=0.0, verbose_name="Kritik miqdori")
 
@@ -88,11 +86,43 @@ class Storage(DateTimeMixinModel):
         return self.title
 
 
+class ProductOrder(DateTimeMixinModel):
+    TYPE = (
+        ('receive', 'receive'),
+        ('leave', 'leave'),
+        ('plan', 'plan')
+    )
+    type = models.CharField(
+        max_length=50, choices=TYPE, verbose_name="Turi")
+    
+    receive_invoice = models.ForeignKey(
+        'ReceiveInvoice', on_delete=models.SET_NULL, null=True, verbose_name="Kirish faktura")
+    
+    leave_invoice = models.ForeignKey(
+        'LeaveInvoice', on_delete=models.SET_NULL, null=True, verbose_name="Chiqish faktura")
+
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name="Mahsulot")
+
+    storage = models.ForeignKey(
+        Storage, on_delete=models.CASCADE, verbose_name="Ombor")
+
+    quantity = models.FloatField(verbose_name="Miqdori")
+    price = models.PositiveIntegerField(verbose_name='Narxi')
+    currency = models.ForeignKey(
+        'finance.Currency', on_delete=models.CASCADE, verbose_name='Valyuta')
+
+    saved = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return self.product.title
+
+
 class ReceiveInvoice(DateTimeMixinModel):
     STATUS = (
-        ('Waiting', 'Waiting'),
-        ('Saved', 'Saved'),
-        ('Cancelled', 'Cancelled'),
+        ('waiting', 'waiting'),
+        ('saved', 'saved'),
+        ('cancelled', 'cancelled'),
     )
     supplier = models.ForeignKey(
         'supplier.Supplier', on_delete=models.CASCADE, verbose_name="Ta'minotchi")
@@ -113,22 +143,12 @@ class ReceiveInvoice(DateTimeMixinModel):
         return f"Kirim {self.id}"
 
 
-class ReceiveInvoiceOrder(DateTimeMixinModel):
-    invoice = models.ForeignKey(
-        ReceiveInvoice, on_delete=models.CASCADE, verbose_name="Faktura")
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name="Mahsulot")
-    quantity = models.FloatField(verbose_name="Miqdori")
-    price = models.PositiveIntegerField(verbose_name='Narxi')
-    currency = models.ForeignKey('finance.Currency', on_delete=models.CASCADE, verbose_name='Valyuta')
-
-
 class LeaveInvoice(DateTimeMixinModel):
     STATUS = (
-        ('In Progress', 'In Progress'),
-        ('Waiting', 'Waiting'),
-        ('Saved', 'Saved'),
-        ('Cancelled', 'Cancelled'),
+        ('in-progress', 'in-progress'),
+        ('waiting', 'waiting'),
+        ('saved', 'saved'),
+        ('cancelled', 'cancelled'),
     )
     storage = models.ForeignKey(
         Storage, on_delete=models.CASCADE, verbose_name='Ombor')
@@ -151,22 +171,13 @@ class LeaveInvoice(DateTimeMixinModel):
         return f"Chiqish {self.id}"
 
 
-class LeaveInvoiceOrder(DateTimeMixinModel):
-    invoice = models.ForeignKey(
-        LeaveInvoice, on_delete=models.CASCADE, verbose_name="Faktura")
-    product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name="Mahsulot")
-    quantity = models.FloatField(verbose_name="Miqdori")
-    price = models.PositiveIntegerField(verbose_name='Narxi')
-    currency = models.ForeignKey('finance.Currency', on_delete=models.CASCADE, verbose_name='Valyuta')
-
-
 class DefectiveProduct(DateTimeMixinModel):
     product = models.ForeignKey(Product, on_delete=models.CASCADE,
                                 related_name="defective_products", verbose_name="Mahsulot nomi")
     quantity = models.FloatField(verbose_name="Miqdori")
     valid_status = models.BooleanField(verbose_name="Qayta ishlashga yaroqlik")
     returned_status = models.BooleanField(verbose_name="Sotuvdan qaytgan")
+    storage = models.ForeignKey(Storage, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Buzilgan mahsulot'

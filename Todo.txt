@@ -1,0 +1,14 @@
+Current
+1. Faktura va order statusini saved qilish.
+2. Maxsulot miqdorini faqat saqlangan order bo'yicha chiqarish.
+3. Faktura summasini chiqarib berish.
+4. Filterlar.
+
+
+
+
+
+
+
+In the End
+1. Omborchi faktura yaratayotganda faqat o'zini omborini belgilashi mumkun.

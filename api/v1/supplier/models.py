@@ -9,16 +9,17 @@ class Supplier(DateTimeMixinModel):
     fullname = models.CharField(
         max_length=255, blank=True, verbose_name="Direktor FIO")
 
-    phone_number1 = models.CharField(max_length=15, validators=(
+    phone_number1 = models.CharField(max_length=15, blank=True, validators=(
         phone_regex,), verbose_name="Asosiy telefon raqami")
     phone_number2 = models.CharField(max_length=15, blank=True, validators=(
         phone_regex,), verbose_name="Qo'shimcha telefon raqami")
 
-    responsible = models.CharField(max_length=255, verbose_name="Mas'ul shaxs")
-    address = models.CharField(max_length=255, verbose_name="Manzil")
+    responsible = models.CharField(max_length=255, blank=True, verbose_name="Mas'ul shaxs")
+    address = models.CharField(max_length=255, blank=True, verbose_name="Manzil")
     
-    bank_details = models.OneToOneField(
-        'BankDetails', on_delete=models.CASCADE, verbose_name="Bank ma'lumotlari")
+    bank_mfo = models.CharField(max_length=50, blank=True, verbose_name="Bank MFO")
+    bank_inn = models.CharField(max_length=50, blank=True, verbose_name="Bank INN")
+    bank_account = models.CharField(max_length=50, blank=True, verbose_name='Hisob raqami')
 
     description = models.TextField(blank=True, verbose_name='Izoh')
 
@@ -28,12 +29,3 @@ class Supplier(DateTimeMixinModel):
 
     def __str__(self):
         return self.title
-
-
-class BankDetails(DateTimeMixinModel):
-    MFO = models.CharField(max_length=50)
-    INN = models.CharField(max_length=50)
-    BANK_ACCOUNT = models.CharField(max_length=50, verbose_name='Hisob raqami')
-
-    class Meta:
-        verbose_name = "Ta'minotchi Bank rekviziti"

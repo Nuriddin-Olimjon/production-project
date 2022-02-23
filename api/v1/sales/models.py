@@ -18,8 +18,9 @@ class Client(DateTimeMixinModel):
     address = models.CharField(
         max_length=255, blank=True, verbose_name='Manzil')
 
-    bank_details = models.OneToOneField(
-        'ClientBankDetail', on_delete=models.CASCADE, verbose_name="Bank rekvizitlari")
+    bank_mfo = models.CharField(max_length=50, blank=True, verbose_name="Bank MFO")
+    bank_inn = models.CharField(max_length=50, blank=True, verbose_name="Bank INN")
+    bank_account = models.CharField(max_length=50, blank=True, verbose_name="Hisob raqami")
 
     description = models.TextField(blank=True, verbose_name='Izoh')
 
@@ -32,7 +33,7 @@ class Client(DateTimeMixinModel):
 
 
 class City(models.Model):
-    title = models.CharField(max_length=255, verbose_name='Shahar nomi')
+    title = models.CharField(max_length=255, unique=True, verbose_name='Shahar nomi')
 
     class Meta:
         verbose_name = 'Shahar'
@@ -40,15 +41,6 @@ class City(models.Model):
 
     def __str__(self):
         return self.title
-
-
-class ClientBankDetail(models.Model):
-    MFO = models.CharField(max_length=50)
-    INN = models.CharField(max_length=50)
-    BANK_ACCOUNT = models.CharField(max_length=50, verbose_name="Hisob raqami")
-
-    class Meta:
-        verbose_name = 'Mijoz bank rekvizit'
 
 
 # class Plan(models.Model):
